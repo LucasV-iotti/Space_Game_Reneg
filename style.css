@@ -1,0 +1,96 @@
+/* LIGHT BLUE SPACE THEME */
+:root{
+  --accent:#66d1ff;     /* azul claro principal */
+  --accent-2:#b8e9ff;   /* azul claríssimo */
+  --bg-1:#0a1730;       /* fundo escuro azulado (base) */
+  --bg-2:#11335c;       /* tom mais claro para gradiente */
+  --ink:#f4fbff;        /* texto claro */
+  --card:#0f1f3d;       /* cartões/hud */
+  --pill:#122a4d;       /* chips/hud */
+  --good:#22e6b8; --bad:#ff5c8a; --warn:#ffd167; --muted:#b7d6ee;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--ink); font-family: Inter, system-ui, Segoe UI, Roboto, sans-serif;
+  background:
+    radial-gradient(1200px 800px at 85% -10%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(1100px 760px at -10% 110%, color-mix(in oklab, var(--accent-2) 22%, transparent), transparent 60%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 55%, #0a162b 100%);
+}
+/* estrelas leves */
+body::before{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.2px), radial-gradient(rgba(255,255,255,.05) .8px, transparent 1px);
+  background-size: 3px 3px, 2px 2px; background-position: 0 0, 1px 1px;}
+
+.app{min-height:100vh; display:grid; grid-template-rows:auto auto 1fr auto; gap:10px; padding:10px 12px; max-width:1150px; margin:0 auto}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.topbar h1{font-family: Orbitron, Inter, sans-serif; font-weight:800; letter-spacing:.3px; margin:0; font-size: clamp(1.05rem, 2vw, 1.45rem)}
+.actions{display:flex; gap:8px}
+
+.screen{display:none}
+.screen.active{display:contents}
+
+.card{background: linear-gradient(180deg, rgba(255,255,255,.06), transparent), var(--card); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; box-shadow: 0 10px 24px rgba(0,0,0,.35)}
+label{display:block; margin:8px 0 6px; color: var(--muted); font-size:.95rem}
+input[type=text]{width:100%; padding:10px 12px; border-radius:10px; border:1px solid #1b4a7a; background:#0c2142; color:var(--ink); outline:none}
+input[type=text]:focus{box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 50%, transparent)}
+.hint{margin:6px 0 0; color: var(--muted); font-size:.9rem}
+
+.primary,.ghost{border-radius:10px; padding:9px 12px; font-weight:800; letter-spacing:.3px; cursor:pointer; border:1px solid transparent; font-size:.95rem}
+.primary{background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#061729}
+.ghost{background: rgba(255,255,255,.06); color:var(--ink); border-color: rgba(255,255,255,.16)}
+.primary.big{font-size:1rem}
+
+.hud{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+.pilot{display:flex; align-items:center; gap:8px}
+.avatar{font-size:28px}
+.name{font-weight:800}
+.cpf{color: var(--muted); font-size:.9rem}
+.stats{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.stat{background:var(--pill); border:1px solid #1b4a7a; padding:6px 8px; border-radius:10px; text-align:center}
+.stat span{display:block; font-size:.72rem; color: var(--muted)}
+.stat strong{font-family: Orbitron; font-size:.98rem}
+.controls{display:flex; align-items:center; gap:8px}
+
+.dice{width:44px; height:44px; display:grid; place-items:center; border-radius:10px; font-size:22px; font-weight:800; background: linear-gradient(145deg, #173a66, #0e2c52); border:1px solid #1b4a7a; color:#e7f6ff; box-shadow: 0 6px 18px rgba(0,0,0,.4), inset 0 0 10px color-mix(in oklab, var(--accent) 25%, transparent)}
+.dice.rolling{animation: roll-wobble 900ms ease-in-out}
+@keyframes roll-wobble{0%{transform:rotate(0) scale(1)}20%{transform:rotate(12deg) scale(1.05)}40%{transform:rotate(-12deg) scale(1.05)}60%{transform:rotate(8deg) scale(1.03)}80%{transform:rotate(-8deg) scale(1.03)}100%{transform:rotate(0) scale(1)}}
+@media (prefers-reduced-motion: reduce){.dice.rolling{animation:none}}
+
+/* SVG BOARD */
+.svg-board-wrap{display:grid; gap:8px; align-content:start}
+.svg-board{width:100%; height:min(68vh, 76vw); background:
+  radial-gradient(600px 400px at 20% 30%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 60%),
+  radial-gradient(700px 480px at 80% 80%, color-mix(in oklab, var(--accent-2) 16%, transparent), transparent 60%)}
+#boardSVG{width:100%; height:100%}
+#nodes circle{fill:#0c2244; stroke:#1b4a7a; stroke-width:2}
+#nodes circle.question{stroke:var(--accent-2); stroke-width:2.6}
+#nodes text{fill:#f4fbff; font-family: Orbitron; font-size:14px; text-anchor:middle; dominant-baseline:middle}
+#nodes .badge10 circle{stroke: var(--warn); stroke-dasharray: 4 3}
+#nodes .badge20 circle{stroke: var(--accent); stroke-width:3}
+#svgToken{filter: drop-shadow(0 0 8px color-mix(in oklab, var(--accent) 50%, transparent))}
+
+.legend{display:flex; gap:8px; align-items:center}
+.pill{display:inline-flex; align-items:center; gap:6px; padding:5px 8px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); font-size:.85rem}
+.pill small{color: var(--muted)}
+.pill.q::before{content:'?'; font-weight:800; color:#f9fcff}
+.pill.c10::before{content:'10'; color: var(--warn)}
+.pill.c20::before{content:'20'; color: var(--accent)}
+
+/* MODAL + QUIZ (texto branco) */
+.modal{border:none; padding:0; background: transparent; width:min(620px, 94vw)}
+.modal::backdrop{background: rgba(6,10,22,.62)}
+.modal-body{background: var(--card); color:#fff; border:1px solid rgba(255,255,255,.16); padding:12px; border-radius:12px}
+.modal-body menu{display:flex; justify-content:flex-end; margin-top:8px}
+.quiz .q-head{display:flex; align-items:center; gap:8px}
+.quiz .q-emoji{font-size:22px}
+.q-text{font-size:1.05rem}
+.q-options{display:grid; gap:8px; margin-top:8px}
+.q-options button{text-align:left; padding:10px 12px; border-radius:10px; background:#0c2142; border:1px solid #1b4a7a; color:#fff; cursor:pointer}
+.q-options button:hover{border-color: var(--accent)}
+.q-options button.correct{border-color: var(--good); box-shadow: inset 0 0 0 1px var(--good)}
+.q-options button.wrong{border-color: var(--bad); box-shadow: inset 0 0 0 1px var(--bad)}
+.q-feedback{background: rgba(255,255,255,.06); border:1px solid #1b4a7a; padding:9px 11px; border-radius:10px}
+.q-feedback.good{border-color: var(--good)}
+.q-feedback.bad{border-color: var(--bad)}

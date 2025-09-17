@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desafio da RENG — Tabuleiro SVG v7.5 (Azul Claro)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>🧑‍🚀 Desafio da RENG — Traçado Reto (SVG)</h1>
+      <div class="actions">
+        <button id="btnRegras" class="ghost">📜 Regras</button>
+        <button id="btnSobre" class="ghost">ℹ️ Sobre</button>
+      </div>
+    </header>
+
+    <!-- IDENTIFICAÇÃO -->
+    <section id="screen-ident" class="screen active">
+      <div class="card ident">
+        <h2>🧑‍🚀 Identificação do Jogador</h2>
+        <form id="formIdent" novalidate>
+          <label for="playerName">Nome completo</label>
+          <input id="playerName" name="playerName" type="text" placeholder="Digite seu nome completo" required />
+          <label for="playerCPF">CPF</label>
+          <input id="playerCPF" name="playerCPF" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" required />
+          <p id="cpfHint" class="hint">Digite um CPF válido (apenas números, a máscara será aplicada automaticamente).</p>
+          <button id="btnStart" class="primary" type="submit">▶️ Iniciar Jogo</button>
+        </form>
+      </div>
+
+      <div class="card goal">
+        <h3>🎯 Objetivo</h3>
+        <ul>
+          <li>Chegar à <strong>Casa 20</strong> e responder entre <strong>8 e 10 perguntas</strong>.</li>
+          <li>Casas de pergunta em <em>casa sim, casa não</em> (pares).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- JOGO -->
+    <section id="screen-game" class="screen">
+      <div class="hud">
+        <div class="pilot">
+          <div class="avatar" aria-hidden="true">🧑‍🚀</div>
+          <div class="who">
+            <div id="hudName" class="name">—</div>
+            <div id="hudCPF" class="cpf">—</div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Casa</span><strong id="hudCasa">1</strong></div>
+          <div class="stat"><span>Pontos</span><strong id="hudPontos">0</strong></div>
+          <div class="stat"><span>Perguntas</span><strong id="hudPerguntas">0/10</strong></div>
+          <div class="stat"><span>Último dado</span><strong id="hudDado">—</strong></div>
+        </div>
+        <div class="controls">
+          <button id="btnRoll" class="primary big">🎲 Rolar o Dado</button>
+          <div id="dice" class="dice" aria-live="polite" title="Dado (animação)">🎲</div>
+          <button id="btnRestart" class="ghost">↻ Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="svg-board-wrap">
+        <div class="svg-board" id="svgBoard">
+          <svg id="boardSVG" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="trackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="var(--accent)"/>
+                <stop offset="100%" stop-color="#c5efff"/>
+              </linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <!-- Traçado reto/serpentina com cantos arredondados -->
+            <path id="trackPath" d="M 60 520 H 940 V 440 H 60 V 360 H 940 V 280 H 60 V 200 H 940 V 120 H 60"
+                  fill="none" stroke="url(#trackGrad)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+            <g id="nodes"></g>
+            <!-- Token: ASTRONAUTA -->
+            <text id="svgToken" x="60" y="520" font-size="30" text-anchor="middle" dominant-baseline="middle">🧑‍🚀</text>
+          </svg>
+        </div>
+        <div class="legend">
+          <span class="pill q">?<small>pergunta (pares)</small></span>
+          <span class="pill c10">10<small>checkpoint</small></span>
+          <span class="pill c20">20<small>meta</small></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTADO -->
+    <section id="screen-end" class="screen">
+      <div class="card end">
+        <h2>🏁 Missão Concluída</h2>
+        <p id="endSummary" class="summary"></p>
+        <div class="end-actions">
+          <button id="btnAgainSame" class="primary">▶️ Jogar novamente (mesmo jogador)</button>
+          <button id="btnAgainNew" class="ghost">👤 Trocar jogador</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAIS -->
+  <dialog id="modalRegras" class="modal">
+    <form method="dialog" class="modal-body">
+      <h3>📜 Regras do Jogo — Detalhadas e Informativas</h3>
+      <ol>
+        <li><strong>Objetivo Principal</strong>
+          <ul>
+            <li>Avançar pelo tabuleiro até a <strong>Casa 20</strong> e responder perguntas sobre <strong>renegociação</strong>.</li>
+            <li>Para vencer, você precisa ter respondido <strong>pelo menos 8 perguntas</strong> (máximo de 10) <em>e</em> ter alcançado/ultrapassado a <strong>Casa 20</strong>.</li>
+          </ul>
+        </li>
+        <li><strong>Como Jogar</strong>
+          <ul>
+            <li>Clique em <strong>🎲 Rolar o Dado</strong> para sortear um número de <strong>1 a 2</strong> (dado binário).</li>
+            <li>O astronauta avança o número de casas correspondente ao valor do dado.</li>
+            <li>O tabuleiro tem <strong>20 casas</strong>; após a Casa 20, o caminho <strong>reinicia</strong> (loop) a partir da Casa 1.</li>
+          </ul>
+        </li>
+        <li><strong>Casas Especiais</strong>
+          <ul>
+            <li><strong>Casas pares (2, 4, …, 20)</strong>: mostram uma <strong>pergunta</strong>.</li>
+            <li><strong>Acertou</strong>: ganha <strong>+1 ponto</strong>.</li>
+            <li><strong>Errou</strong>: volta <strong>2 casas</strong> (não pode ir abaixo da Casa 1).</li>
+            <li><strong>Casa 10</strong>: <em>checkpoint visual</em>.</li>
+            <li><strong>Casa 20</strong>: <em>meta principal</em> (não encerra sozinha — ver condições de término).</li>
+          </ul>
+        </li>
+        <li><strong>Perguntas & Pontuação</strong>
+          <ul>
+            <li>Cada pergunta vale <strong>1 ponto</strong>. O placar é acumulativo.</li>
+            <li>Você pode responder <strong>até 10 perguntas</strong> por partida.</li>
+          </ul>
+        </li>
+        <li><strong>Condições de Término</strong>
+          <ul>
+            <li>O jogo encerra <strong>automaticamente</strong> ao responder <strong>10 perguntas</strong>, ou</li>
+            <li>Quando você já tiver alcançado/ultrapassado a <strong>Casa 20</strong> e tiver respondido <strong>pelo menos 8</strong> perguntas.</li>
+          </ul>
+        </li>
+        <li><strong>Dicas Rápidas</strong>
+          <ul>
+            <li>Leia com atenção: as questões refletem <strong>procedimentos reais</strong> de renegociação.</li>
+            <li>Sem pressa: <strong>não há cronômetro</strong> — pense antes de responder.</li>
+            <li>Use o jogo para <strong>reforçar conhecimento</strong> e identificar pontos a estudar.</li>
+          </ul>
+        </li>
+      </ol>
+      <menu><button class="primary">Fechar</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="modalSobre" class="modal">
+    <form method="dialog" class="modal-body">
+      <h3>ℹ️ Sobre</h3>
+      <p>Tabuleiro <strong>SVG</strong> com traçado <strong>reto/serpentina</strong>. Tema <strong>Azul Claro</strong> com nebulosas suaves, peça do jogador <strong>astronauta</strong> e dado <strong>1–2</strong>.</p>
+      <menu><button class="primary">Fechar</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="modalQuiz" class="modal">
+    <form method="dialog" class="modal-body quiz">
+      <div class="q-head"><div class="q-emoji" aria-hidden="true">❓</div><h3 id="qTitle">Pergunta</h3></div>
+      <p id="qText" class="q-text"></p>
+      <div id="qOptions" class="q-options"></div>
+      <p id="qFeedback" class="q-feedback" hidden></p>
+      <menu><button id="btnCloseQuiz" class="primary" disabled>Continuar</button></menu>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
